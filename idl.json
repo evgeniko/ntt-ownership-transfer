@@ -1,0 +1,64 @@
+{
+    "version": "0.1.0",
+    "name": "ntt",
+    "instructions": [
+      {
+        "name": "transferOwnership",
+        "accounts": [
+          {
+            "name": "config",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "owner",
+            "isMut": false,
+            "isSigner": true
+          },
+          {
+            "name": "newOwner",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "upgradeLock",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "programData",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "bpfLoaderUpgradeableProgram",
+            "isMut": false,
+            "isSigner": false
+          }
+        ],
+        "args": []
+      }
+    ],
+    "accounts": [
+      {
+        "name": "Config",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "owner",
+              "type": "publicKey"
+            },
+            {
+              "name": "data",
+              "type": "bytes"
+            }
+          ]
+        }
+      }
+    ],
+    "metadata": {
+      "address": "NtTRRTAVhw9W4hvgnSSzQodmQ6RgFpQJDWuByZfSfvd"
+    }
+  }
+  
