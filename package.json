@@ -4,6 +4,7 @@
   },
   "dependencies": {
     "@project-serum/anchor": "^0.26.0",
-    "@solana/web3.js": "^1.95.2"
+    "@solana/web3.js": "1.70.3",
+    "@sqds/multisig": "^2.1.3"
   }
 }

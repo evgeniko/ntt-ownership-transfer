@@ -1,64 +1,110 @@
 {
-    "version": "0.1.0",
-    "name": "ntt",
-    "instructions": [
-      {
-        "name": "transferOwnership",
-        "accounts": [
+  "version": "2.0.0",
+  "name": "example_native_token_transfers",
+  "instructions": [
+    {
+      "name": "transferOwnership",
+      "accounts": [
+        {
+          "name": "config",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "owner",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "newOwner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "upgradeLock",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "programData",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bpfLoaderUpgradeableProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "claimOwnership",
+      "accounts": [
+        {
+          "name": "config",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "upgradeLock",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "newOwner",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "programData",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bpfLoaderUpgradeableProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Config",
+      "type": {
+        "kind": "struct",
+        "fields": [
           {
-            "name": "config",
-            "isMut": true,
-            "isSigner": false
+            "name": "bump",
+            "type": "u8"
           },
           {
             "name": "owner",
-            "isMut": false,
-            "isSigner": true
+            "docs": [
+              "Owner of the program."
+            ],
+            "type": "publicKey"
           },
           {
-            "name": "newOwner",
-            "isMut": false,
-            "isSigner": false
-          },
-          {
-            "name": "upgradeLock",
-            "isMut": false,
-            "isSigner": false
-          },
-          {
-            "name": "programData",
-            "isMut": true,
-            "isSigner": false
-          },
-          {
-            "name": "bpfLoaderUpgradeableProgram",
-            "isMut": false,
-            "isSigner": false
-          }
-        ],
-        "args": []
-      }
-    ],
-    "accounts": [
-      {
-        "name": "Config",
-        "type": {
-          "kind": "struct",
-          "fields": [
-            {
-              "name": "owner",
-              "type": "publicKey"
-            },
-            {
-              "name": "data",
-              "type": "bytes"
+            "name": "pendingOwner",
+            "docs": [
+              "Pending next owner (before claiming ownership)."
+            ],
+            "type": {
+              "option": "publicKey"
             }
-          ]
-        }
+          }
+        ]
       }
-    ],
-    "metadata": {
-      "address": "NtTRRTAVhw9W4hvgnSSzQodmQ6RgFpQJDWuByZfSfvd"
     }
-  }
-  
+  ],
+  "errors": [
+    {
+      "code": 6001,
+      "name": "InvalidPendingOwner",
+      "msg": "InvalidPendingOwner"
+    }
+  ]
+}
