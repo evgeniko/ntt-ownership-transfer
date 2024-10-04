@@ -68,6 +68,83 @@
         }
       ],
       "args": []
+    },
+    {
+      "name": "setOutboundLimit",
+      "accounts": [
+        {
+          "name": "config",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "owner",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "rateLimit",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "SetOutboundLimitArgs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "setInboundLimit",
+      "accounts": [
+        {
+          "name": "config",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "owner",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "rateLimit",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "SetInboundLimitArgs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "setPaused",
+      "accounts": [
+        {
+          "name": "owner",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "config",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "pause",
+          "type": "bool"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -95,6 +172,50 @@
             "type": {
               "option": "publicKey"
             }
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "SetInboundLimitArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "limit",
+            "type": "u64"
+          },
+          {
+            "name": "chainId",
+            "type": {
+              "defined": "ChainId"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "SetOutboundLimitArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "limit",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ChainId",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "u16"
           }
         ]
       }

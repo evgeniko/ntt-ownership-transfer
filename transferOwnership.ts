@@ -111,7 +111,7 @@ const fs = require('fs');
 
     /*
       ONLY DEVNET VERSION
-      transferToMainnet with UI !!
+      transferOwnershipMainnet.ts can be used with Squads UI for Mainnet!!
     */
 
     // proposalApprove method needs to be executed for every member of the squad!
