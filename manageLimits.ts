@@ -1,15 +1,19 @@
 import * as anchor from "@project-serum/anchor";
 import { Connection as solanaConnection, PublicKey, TransactionMessage, VersionedTransaction } from "@solana/web3.js";
-import idl from "./idl.json";
 import * as multisig from "@sqds/multisig";
 const fs = require('fs');
 
+import "@wormhole-foundation/sdk-solana-ntt";
+import { getNttProgram, NTT } from "@wormhole-foundation/sdk-solana-ntt";
+
 (async () => {
-    const walletPath = "/WpyVik9YdWs8jnFoLnRBxfGfgQKgSxfEs5MYfTRwLCY.json";
+    // TODO: needs to be one of the signers of the Squad
+    const walletPath = "WSjKF6e3bEuLKuQdgi6enzb3QAHAUZvs93dBGXRBUED.json";
     const walletJSON = JSON.parse(fs.readFileSync(walletPath, "utf-8"));
     const walletKeypair = anchor.web3.Keypair.fromSecretKey(Uint8Array.from(walletJSON));
 
-    const programId = "nt5qvUo98jeiYSW8opSJt7F3e8XnSX1xXt4qKmCrvgd";
+    // TODO: change to your NTT manager address
+    const programId = "Nt6LBJ3wXBrsCortqeALpYG3XdqpGaCd1GAhhrva4pg";
     const programIdKey = new PublicKey(programId);
 
     const solanaCon = new solanaConnection("https://api.devnet.solana.com");
@@ -19,7 +23,8 @@ const fs = require('fs');
         programIdKey
     );
 
-    const squadsAddress = new PublicKey("5xy4cJ7dWjZ1zqfePVCxGA8mgpsYW54G3Be4UHfmyVCF");
+    // TODO: change to your squads pubkey
+    const squadsAddress = new PublicKey("CnTS7RmoqVh88grwarBdkXM63avL4yaz8mtjzxjAj9zn");
     const [vaultPda] = multisig.getVaultPda({
         multisigPda: squadsAddress,
         index: 0,
@@ -44,14 +49,20 @@ const fs = require('fs');
     const currentTransactionIndex = Number(multisigInfo.transactionIndex);
     const newTransactionIndex = BigInt(currentTransactionIndex + 1);
 
-    const program = new anchor.Program(idl as anchor.Idl, programId, provider);
+    const program = getNttProgram(
+        solanaCon,
+        programId,
+        "2.0.0" // ntt solana version parameter
+    );
+    
     const [outboundLimitPublicKey] = await PublicKey.findProgramAddress(
         [Buffer.from("outbox_rate_limit")],
         programIdKey
     );
-
+    // needs to have the correct amount of decimals for the respective chain
+    const outbountLimit = new anchor.BN(2150000000); // 2.150000000 tokens on Solana
     const outboundLimitInstruction = await program.methods
-        .setOutboundLimit({ limit: new anchor.BN(1000.005) })
+        .setOutboundLimit({ limit:  outbountLimit})
         .accounts({
             config: configPublicKey,
             owner: vaultPda,
@@ -65,29 +76,25 @@ const fs = require('fs');
         programIdKey
     );
     // List of ChainIds: https://github.com/wormhole-foundation/wormhole-sdk-ts/blob/fa4ba4bc349a7caada809f209090d79a3c5962fe/core/base/src/constants/chains.ts#L6
-    const inboundLimitInstruction = await program.methods
-        .setInboundLimit({ limit: new anchor.BN(1000.005), chain_id: 1 })
-        .accounts({
-            config: configPublicKey,
-            owner: vaultPda,
-            rateLimit: inboundrateLimitPublicKey,
-        })
-        .instruction();
-
-    const pauseInstruction = await program.methods
-    .setPaused(true)
-    .accounts({
-        config: configPublicKey,
+    const inboundLimit = new anchor.BN(1150000000);
+    // will only work if the specific chain inbound limit was initialized (done with add-chain command)
+    const inboundLimitInstruction = await NTT.setInboundLimit(program as any, {
         owner: vaultPda,
-    })
-    .instruction();
+        chain: "Solana",
+        limit: new anchor.BN(inboundLimit.toString()),
+    });
+
+    const pauseInstruction = await NTT.createSetPausedInstruction(program as any, {
+        owner: vaultPda,
+        paused: false
+    });
 
     // Build a message with instructions we want to execute
     const testClaimMessage = new TransactionMessage({
         payerKey: vaultPda,
         recentBlockhash: (await solanaCon.getLatestBlockhash()).blockhash,
         //TODO: modify this based on the instruction you want to perform (outboundLimitInstruction / inboundLimitInstruction or pauseInstruction)
-        instructions: [pauseInstruction],
+        instructions: [inboundLimitInstruction],
     });
     
     const uploadTransactionIx = await multisig.instructions.vaultTransactionCreate({
@@ -106,11 +113,6 @@ const fs = require('fs');
       transactionIndex: newTransactionIndex,
       creator: squadMember.publicKey
     });
-
-    /*
-      ONLY DEVNET VERSION
-      transferOwnershipMainnet.ts can be used with Squads UI for Mainnet!!
-    */
 
     // proposalApprove method needs to be executed for every member of the squad!
     // only needed for testing purposes, if on devnet. 

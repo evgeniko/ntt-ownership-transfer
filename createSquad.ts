@@ -1,5 +1,5 @@
 import * as multisig from "@sqds/multisig";
-const { Permission, Permissions } = multisig.types;
+const { Permissions } = multisig.types;
 import { Connection, Keypair } from "@solana/web3.js";
 const fs = require('fs');
 
@@ -10,7 +10,7 @@ const fs = require('fs');
     // This will need to be a signer on the transaction
     const createKey = Keypair.generate();
     // Creator should be a Keypair or a Wallet Adapter wallet
-    const walletPath = "./WpyVik9YdWs8jnFoLnRBxfGfgQKgSxfEs5MYfTRwLCY.json";
+    const walletPath = "WSjKF6e3bEuLKuQdgi6enzb3QAHAUZvs93dBGXRBUED.json";
     const walletJSON = JSON.parse(fs.readFileSync(walletPath, "utf-8"));
     const creator = Keypair.fromSecretKey(Uint8Array.from(walletJSON));
     
@@ -18,8 +18,12 @@ const fs = require('fs');
     const [multisigPda] = multisig.getMultisigPda({
         createKey: createKey.publicKey,
     });
+
+    const [programConfigPda] = multisig.getProgramConfigPda({});
+    const programConfig = await multisig.accounts.ProgramConfig.fromAccountAddress(connection, programConfigPda);
+    const configTreasury = programConfig.treasury;
     
-    const signature = await multisig.rpc.multisigCreate({
+    const signature = await multisig.rpc.multisigCreateV2({
         connection: connection,
         creator: creator, 
         // Must sign the transaction, unless the .rpc method is used.
@@ -40,7 +44,10 @@ const fs = require('fs');
         ],
         // This means that there needs to be 2 votes for a transaction proposal to be approved
         threshold: 1,
+        rentCollector: null,
+        treasury: configTreasury
     });
-    
+
+    console.log("New squad pubkey: ", multisigPda)    
     console.log("Multisig created: ", signature)
 })();
