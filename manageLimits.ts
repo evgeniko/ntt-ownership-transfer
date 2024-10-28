@@ -8,12 +8,12 @@ import { getNttProgram, NTT } from "@wormhole-foundation/sdk-solana-ntt";
 
 (async () => {
     // TODO: needs to be one of the signers of the Squad
-    const walletPath = "WSjKF6e3bEuLKuQdgi6enzb3QAHAUZvs93dBGXRBUED.json";
+    const walletPath = "ww4AoktpBksE1M4zk6vWxujbqtaqhGY59VMuAxV4yxq.json";
     const walletJSON = JSON.parse(fs.readFileSync(walletPath, "utf-8"));
     const walletKeypair = anchor.web3.Keypair.fromSecretKey(Uint8Array.from(walletJSON));
 
     // TODO: change to your NTT manager address
-    const programId = "Nt6LBJ3wXBrsCortqeALpYG3XdqpGaCd1GAhhrva4pg";
+    const programId = "ntTPvQLdTaMUXNX1LBbAvbz9i2GyH3KwB8Q3NFDZhzK";
     const programIdKey = new PublicKey(programId);
 
     const solanaCon = new solanaConnection("https://api.devnet.solana.com");
@@ -24,7 +24,7 @@ import { getNttProgram, NTT } from "@wormhole-foundation/sdk-solana-ntt";
     );
 
     // TODO: change to your squads pubkey
-    const squadsAddress = new PublicKey("CnTS7RmoqVh88grwarBdkXM63avL4yaz8mtjzxjAj9zn");
+    const squadsAddress = new PublicKey("squri3LHQffRXoy3ZFbNCWg2Ck38jzcNXNQJQQJzPEa");
     const [vaultPda] = multisig.getVaultPda({
         multisigPda: squadsAddress,
         index: 0,
@@ -76,11 +76,11 @@ import { getNttProgram, NTT } from "@wormhole-foundation/sdk-solana-ntt";
         programIdKey
     );
     // List of ChainIds: https://github.com/wormhole-foundation/wormhole-sdk-ts/blob/fa4ba4bc349a7caada809f209090d79a3c5962fe/core/base/src/constants/chains.ts#L6
-    const inboundLimit = new anchor.BN(1150000000);
+    const inboundLimit = new anchor.BN(1150000000); // 1.15
     // will only work if the specific chain inbound limit was initialized (done with add-chain command)
     const inboundLimitInstruction = await NTT.setInboundLimit(program as any, {
         owner: vaultPda,
-        chain: "Solana",
+        chain: "Sepolia",
         limit: new anchor.BN(inboundLimit.toString()),
     });
 

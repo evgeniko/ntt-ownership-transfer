@@ -6,12 +6,12 @@ const fs = require('fs');
 
 (async () => {
     // TODO: needs to be token owner & creator of the Squads multisig
-    const tokenOwnerWalletPath = "WSjKF6e3bEuLKuQdgi6enzb3QAHAUZvs93dBGXRBUED.json";
+    const tokenOwnerWalletPath = "ww4AoktpBksE1M4zk6vWxujbqtaqhGY59VMuAxV4yxq.json";
     const walletJSON = JSON.parse(fs.readFileSync(tokenOwnerWalletPath, "utf-8"));
     const walletKeypair = anchor.web3.Keypair.fromSecretKey(Uint8Array.from(walletJSON));
 
     // TODO: change to your NTT manager address
-    const nttManagerProgramId = "Nt6LBJ3wXBrsCortqeALpYG3XdqpGaCd1GAhhrva4pg";
+    const nttManagerProgramId = "ntTPvQLdTaMUXNX1LBbAvbz9i2GyH3KwB8Q3NFDZhzK";
     const nttManagerProgramIdKey =  new PublicKey(nttManagerProgramId);
 
     const solanaCon = new solanaConnection("https://api.devnet.solana.com");
@@ -23,7 +23,7 @@ const fs = require('fs');
 
     // claiming ownership from temporary account with squads sdk!
     // TODO: change to your squads pubkey
-    const squadsAddress = new PublicKey("CnTS7RmoqVh88grwarBdkXM63avL4yaz8mtjzxjAj9zn");
+    const squadsAddress = new PublicKey("squri3LHQffRXoy3ZFbNCWg2Ck38jzcNXNQJQQJzPEa");
     // Derive the PDA of the Squads Vault
     // this is going to be the Upgrade authority address, which is controlled by the Squad!
     const [vaultPda] = multisig.getVaultPda({

@@ -10,7 +10,7 @@ const fs = require('fs');
     // This will need to be a signer on the transaction
     const createKey = Keypair.generate();
     // Creator should be a Keypair or a Wallet Adapter wallet
-    const walletPath = "WSjKF6e3bEuLKuQdgi6enzb3QAHAUZvs93dBGXRBUED.json";
+    const walletPath = "ww4AoktpBksE1M4zk6vWxujbqtaqhGY59VMuAxV4yxq.json";
     const walletJSON = JSON.parse(fs.readFileSync(walletPath, "utf-8"));
     const creator = Keypair.fromSecretKey(Uint8Array.from(walletJSON));
     
